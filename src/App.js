@@ -2,24 +2,34 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import { BrowserRouter as Router,
+         Switch,
+         Route
+ } from 'react-router-dom';
+
+import Home from './components/Home';
+import CreateLobby from './components/CreateLobby';
+import JoinLobby from './components/JoinLobby';
+import Lobby from './components/Lobby';
+
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/lobby/create">
+          <CreateLobby />
+        </Route>
+        <Route path="/lobby/join">
+          <JoinLobby />
+        </Route>
+        <Route path="/lobby">
+          <Lobby />
+        </Route>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 

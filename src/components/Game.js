@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/Row';
 
 import Chat from './Chat';
 
-import { setLobby } from '../actions';
+import { setLobby, reduceLobbyGameTimeLeft } from '../actions';
 
 const Game = ({ socket, lobby, dispatch }) => {
   const history = useHistory();
@@ -22,7 +22,7 @@ const Game = ({ socket, lobby, dispatch }) => {
       } else {
         dispatch(setLobby(message));
       }
-    })
+    });
 
     socket.on('lobbyStatus', (message) => {
       dispatch(setLobby(message));
@@ -31,7 +31,7 @@ const Game = ({ socket, lobby, dispatch }) => {
 
   const pickPlayer = (playerId, action) => {
     socket.emit('game', lobby.id, action, { playerId: playerId });
-  }
+  };
 
   const renderActionButtons = (playerId) => {
     if (lobby.players[socket.id].status !== 'PLAYER_ALIVE' || lobby.players[playerId].status !== 'PLAYER_ALIVE' || (lobby.game.phase === 1 && lobby.players[socket.id].role !== 'WERWOLF') || (lobby.game.phase === 2 && lobby.players[socket.id].role !== 'WITCH')) {
@@ -59,11 +59,11 @@ const Game = ({ socket, lobby, dispatch }) => {
     } else {
       return (<></>);
     }
-  }
+  };
 
   const tickTime = useCallback(() => {
-    lobby.game.timeLeft--;
-  }, [lobby.game.timeLeft]);
+    dispatch(reduceLobbyGameTimeLeft(1));
+  }, [dispatch]);
 
   useEffect(() => {
     if (lobby.status === 'GAME_END') {
@@ -72,11 +72,7 @@ const Game = ({ socket, lobby, dispatch }) => {
 
     fetchLobby();
 
-    let timerId = setInterval(tickTime, 1000);
-
-    return () => {
-      clearInterval(timerId);
-    };
+    setInterval(tickTime, 1000);
   }, [fetchLobby, history, lobby.id, lobby.status, tickTime]);
 
   return (
@@ -106,11 +102,11 @@ const Game = ({ socket, lobby, dispatch }) => {
       </Row>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state) => ({
   socket: state.socket,
   lobby: state.lobby
-})
+});
 
 export default connect(mapStateToProps)(Game);

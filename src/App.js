@@ -11,6 +11,7 @@ import CreateLobby from './components/CreateLobby';
 import JoinLobby from './components/JoinLobby';
 import Lobby from './components/Lobby';
 import Game from './components/Game';
+import GameEnd from './components/GameEnd';
 
 import { setSocket } from './actions';
 
@@ -34,12 +35,15 @@ const App = ({ dispatch }) => {
         <Route path="/game/:lobby_id">
           <Game />
         </Route>
+        <Route path="/game_end/:lobby_id">
+          <GameEnd />
+        </Route>
         <Route path="/">
           <Home />
         </Route>
       </Switch>
     </Router>
   );
-}
+};
 
 export default connect()(App);

@@ -72,7 +72,11 @@ const Game = ({ socket, lobby, dispatch }) => {
 
     fetchLobby();
 
-    setInterval(tickTime, 1000);
+    const lobbyIntervalId = setInterval(tickTime, 1000);
+
+    return () => {
+      clearInterval(lobbyIntervalId);
+    };
   }, [fetchLobby, history, lobby.id, lobby.status, tickTime]);
 
   return (

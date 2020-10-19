@@ -26,7 +26,11 @@ const Lobby = ({ socket, lobby, dispatch }) => {
   };
 
   const startGame = () => {
-    socket.emit('lobby', lobby.id, 'START_GAME');
+    if (Object.keys(lobby.players).length >= 4) {
+      socket.emit('lobby', lobby.id, 'START_GAME');
+    } else {
+      alert('4 or more players are required to start the game.')
+    }
   }
 
   const fetchLobby = useCallback(() => {
@@ -56,7 +60,7 @@ const Lobby = ({ socket, lobby, dispatch }) => {
       <Row>
         <Col>
           <h1>Lobby {lobby.id}</h1>
-          <h3> Host: {lobby.hostId}</h3>
+          {lobby.players && lobby.hostId in lobby.players ? <h3>Host: {lobby.players[lobby.hostId].alias}</h3> : ''}
 
           <ListGroup>
             {
@@ -71,8 +75,12 @@ const Lobby = ({ socket, lobby, dispatch }) => {
       </Row>
 
       <Row>
-        <Button variant={playerReady ? 'danger' : 'primary'} onClick={() => setPlayerStatus(!(playerReady))}>{playerReady ? 'Not ready' : 'Ready'}</Button>
-        {socket.id === lobby.hostId ? <Button variant={lobby.status === 'LOBBY_READY' ? 'primary' : 'danger'} onClick={() => startGame()}>Start</Button> : ''}
+        <Col>
+          <Button variant={playerReady ? 'danger' : 'primary'} onClick={() => setPlayerStatus(!(playerReady))}>{playerReady ? 'Not ready' : 'Ready'}</Button>
+        </Col>
+        <Col>
+          {socket.id === lobby.hostId ? <Button variant={lobby.status === 'LOBBY_READY' ? 'primary' : 'danger'} onClick={() => startGame()}>Start</Button> : ''}
+        </Col>
       </Row>
 
       <Row>

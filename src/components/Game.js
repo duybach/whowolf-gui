@@ -34,7 +34,7 @@ const Game = ({ socket, lobby, dispatch }) => {
   };
 
   const renderActionButtons = (playerId) => {
-    if (lobby.players[socket.id].status !== 'PLAYER_ALIVE' || lobby.players[playerId].status !== 'PLAYER_ALIVE' || (lobby.game.phase === 1 && lobby.players[socket.id].role !== 'WERWOLF') || (lobby.game.phase === 2 && lobby.players[socket.id].role !== 'WITCH')) {
+    if ((lobby.game.round === 0 && lobby.game.phase === 0 ) || lobby.players[socket.id].status !== 'PLAYER_ALIVE' || lobby.players[playerId].status !== 'PLAYER_ALIVE' || (lobby.game.phase === 1 && lobby.players[socket.id].role !== 'WERWOLF') || (lobby.game.phase === 2 && lobby.players[socket.id].role !== 'WITCH')) {
       return (<></>);
     }
 
@@ -61,6 +61,19 @@ const Game = ({ socket, lobby, dispatch }) => {
     }
   };
 
+  const renderPhase = (phase) => {
+    switch(phase) {
+      case 0:
+        return 'Voting Phase';
+      case 1:
+        return 'Werwolf Phase';
+      case 2:
+        return 'Healing Phase';
+      default:
+        return '';
+    }
+  }
+
   const tickTime = useCallback(() => {
     dispatch(reduceLobbyGameTimeLeft(1));
   }, [dispatch]);
@@ -84,16 +97,20 @@ const Game = ({ socket, lobby, dispatch }) => {
       <Row>
         <Col>
           <h1>Game {lobby.id}</h1>
-          <h3>Host: {lobby.hostId}</h3>
-          <h3>Time: {lobby.game.phase === 0 ? 'day time' : 'night time'} ({lobby.game.round}.{lobby.game.phase})</h3>
+          <h3>Time: {lobby.game.phase === 0 ? 'day time' : 'night time'} ({renderPhase(lobby.game.phase)})</h3>
           <h3>Time left: {lobby.game.timeLeft}s</h3>
+          {lobby.players[socket.id].role === 'WITCH' ? <h3>Heal left: {lobby.players[socket.id].healLeft}</h3> : ''}
 
           <ListGroup>
             {
               Object.keys(lobby.players).map((playerId, index) => (
                 <ListGroup.Item key={index} active={lobby.players[socket.id].targetPlayerId === playerId ? true : false}>
-                  {lobby.players[playerId].alias} ({lobby.players[playerId].role} | {lobby.players[playerId].status})
+                  {lobby.players[playerId].alias} (
+                  {playerId === socket.id ? `${lobby.players[playerId].role} | ` : ''}
+                  {lobby.players[playerId].status})
                   {renderActionButtons(playerId)}
+
+                  {lobby.players[playerId].targetPlayerId ? `Voted for ${lobby.players[playerId].targetPlayerId}` : ''}
                 </ListGroup.Item>
               ))
             }

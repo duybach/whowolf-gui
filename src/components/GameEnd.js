@@ -46,14 +46,13 @@ const Game = ({ socket, lobby, dispatch }) => {
 
     fetchLobby();
 
-  }, [fetchLobby, history, lobby.id, lobby.status]);
+  }, [fetchLobby, history, lobby.id, lobby.status, dispatch]);
 
   return (
     <Container>
       <Row>
         <Col>
           <h1>Game {lobby.id}</h1>
-          <h3>Host: {lobby.hostId}</h3>
           <h3>Team won: {lobby.game.teamWon}</h3>
 
           <ListGroup>
@@ -69,7 +68,9 @@ const Game = ({ socket, lobby, dispatch }) => {
       </Row>
 
       <Row>
-        {socket.id === lobby.hostId ? <Button variant={lobby.status === 'GAME_END' ? 'primary' : 'danger'} onClick={() => restartGame()}>Restart</Button> : ''}
+        <Col>
+          {socket.id === lobby.hostId ? <Button variant={lobby.status === 'GAME_END' ? 'primary' : 'danger'} onClick={() => restartGame()}>Restart</Button> : ''}
+        </Col>
       </Row>
 
       <Row>

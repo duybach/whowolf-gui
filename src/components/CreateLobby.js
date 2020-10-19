@@ -12,7 +12,7 @@ import { setLobbyId } from '../actions';
 
 const CreateLobby = ({ socket, dispatch }) => {
   const history = useHistory();
-  
+
   const [isLoading, setLoading] = useState(false);
   const [aliasInput, setAliasInput] = useState('');
 
@@ -31,7 +31,7 @@ const CreateLobby = ({ socket, dispatch }) => {
     <Container>
       <Row>
         <Col>
-          <h1>CreateLobby</h1>
+          <h1>Create A Lobby</h1>
         </Col>
       </Row>
 

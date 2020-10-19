@@ -26,7 +26,7 @@ class Home extends React.Component {
             </Link>
           </Col>
 
-          <Col xs={12} md={6} className="text-center">
+          <Col xs={12} md={6} className="text-center mt-3 mt-md-0">
             <Link to="/lobby/create">
               <Button variant="primary">
                 Create Game

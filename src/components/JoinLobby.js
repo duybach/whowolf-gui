@@ -36,7 +36,7 @@ const JoinLobby = ({ socket, dispatch }) => {
     <Container>
       <Row>
         <Col>
-          <h1>JoinLobby</h1>
+          <h1>Join A Lobby</h1>
         </Col>
       </Row>
 

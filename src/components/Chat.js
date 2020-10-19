@@ -39,7 +39,13 @@ const Chat = ({ socket, lobby, dispatch }) => {
   }
 
   return (
-    <Container fluid>
+    <Container>
+      <Row>
+        <Col>
+          <h3>Chat</h3>
+        </Col>
+      </Row>
+
       <Row>
         <Col>
           <ListGroup>
@@ -49,7 +55,7 @@ const Chat = ({ socket, lobby, dispatch }) => {
           </ListGroup>
         </Col>
       </Row>
-     
+
       <Row>
         <Col>
           <Form onSubmit={sendChatMessage}>
@@ -60,7 +66,7 @@ const Chat = ({ socket, lobby, dispatch }) => {
             <Button variant="primary" type="submit">Enter</Button>
           </Form>
         </Col>
-      </Row> 
+      </Row>
     </Container>
   );
 }

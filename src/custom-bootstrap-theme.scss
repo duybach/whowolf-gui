@@ -1,5 +1,12 @@
-@import "../node_modules/bootstrap/scss/bootstrap";
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&display=swap');
 
-// change the theme
-$body-bg: theme-color("dark");
+$body-bg: #333533;
+$body-color: #e8eddf;
+$font-family-sans-serif: 'Amatic SC', cursive;
+$primary: #cfdbd5;
 
+.btn {
+  color: $body-bg !important;
+}
+
+@import "bootstrap/scss/bootstrap";

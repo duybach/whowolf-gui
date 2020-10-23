@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
@@ -48,8 +48,17 @@ const CreateLobby = ({ socket, dispatch }) => {
             </Form.Group>
 
             <Form.Group as={Row}>
-              <Col sm={{ span: 10, offset: 2 }}>
-                <Button type="submit" disabled={isLoading}>{isLoading ? 'Loading...' : 'Create Lobby'}</Button>
+              <Col>
+                <Button variant="primary" type="submit" disabled={isLoading} block>
+                  {isLoading ? 'Loading...' : 'Create Lobby'}
+                </Button>
+              </Col>
+              <Col>
+                <Link to="/">
+                  <Button variant="danger" block>
+                    Go back
+                  </Button>
+                </Link>
               </Col>
             </Form.Group>
           </Form>

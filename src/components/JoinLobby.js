@@ -1,6 +1,7 @@
 import React, { useState} from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -61,9 +62,21 @@ const JoinLobby = ({ socket, dispatch }) => {
               </Col>
             </Form.Group>
 
-            <Button variant="primary" type="submit" disabled={isLoading}>
-              {isLoading ? 'Loading...' : 'Join Lobby'}
-            </Button>
+            <Form.Group as={Row}>
+              <Col>
+                <Button variant="primary" type="submit" disabled={isLoading} block>
+                  {isLoading ? 'Loading...' : 'Join Lobby'}
+                </Button>
+              </Col>
+
+              <Col>
+                <Link to="/">
+                  <Button variant="danger" block>
+                    Go back
+                  </Button>
+                </Link>
+              </Col>
+            </Form.Group>
           </Form>
         </Col>
       </Row>

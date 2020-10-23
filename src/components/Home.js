@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Link } from 'react-router-dom';
 
 import Button from 'react-bootstrap/Button';
@@ -20,7 +19,7 @@ class Home extends React.Component {
         <Row>
           <Col xs={12} md={6} className="text-center">
             <Link to="/lobby/join">
-              <Button variant="primary">
+              <Button variant="primary" block>
                 Join Game
               </Button>
             </Link>
@@ -28,7 +27,7 @@ class Home extends React.Component {
 
           <Col xs={12} md={6} className="text-center mt-3 mt-md-0">
             <Link to="/lobby/create">
-              <Button variant="primary">
+              <Button variant="primary" block>
                 Create Game
               </Button>
             </Link>

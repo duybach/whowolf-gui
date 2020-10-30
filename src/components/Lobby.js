@@ -66,7 +66,7 @@ const Lobby = ({ socket, lobby, dispatch }) => {
             {
               Object.keys(lobby.players).map((id, index) => (
                 <ListGroup.Item key={index} variant={lobby.players[id].status === 'PLAYER_READY' ? 'success' : ''}>
-                  {lobby.players[id].alias} {socket.id === lobby.hostId ? <Button variant="danger" onClick={() => kickPlayer(id)}>X</Button> : ''}
+                  {lobby.players[id].alias} {socket.id === lobby.hostId && socket.id !== lobby.players[id].id ? <Button variant="danger" onClick={() => kickPlayer(lobby.players[id].id)}>X</Button> : ''}
                 </ListGroup.Item>
               ))
             }

@@ -57,9 +57,9 @@ const Game = ({ socket, lobby, dispatch }) => {
 
           <ListGroup>
             {
-              Object.keys(lobby.players).map((playerId, index) => (
-                <ListGroup.Item key={index} active={lobby.players[socket.id].targetPlayerId === playerId ? true : false}>
-                  {lobby.players[playerId].alias} ({lobby.players[playerId].role} | {lobby.players[playerId].status})
+              Object.keys(lobby.players).map((idx, index) => (
+                <ListGroup.Item key={index}>
+                  {lobby.players[idx].alias} ({lobby.players[idx].role} | {lobby.players[idx].status})
                 </ListGroup.Item>
               ))
             }

@@ -15,37 +15,50 @@ import { setLobby } from '../actions';
 const Lobby = ({ socket, lobby, dispatch }) => {
   const history = useHistory();
   const [playerReady, setPlayerReady] = useState(false);
+  const [hostAlias, setHostAlias] = useState('');
 
   const setPlayerStatus = (status) => {
     setPlayerReady(status);
-    socket.emit('lobby', lobby.id, 'PLAYER_READY', { status: status });
+    socket.emit('lobby', 'PLAYER_READY', { status: status });
   };
 
   const kickPlayer = (playerId) => {
-    socket.emit('lobby', lobby.id, 'KICK_PLAYER', { playerId: playerId });
+    socket.emit('lobby', 'KICK_PLAYER', { playerId: playerId });
   };
 
   const startGame = () => {
-    if (Object.keys(lobby.players).length >= 4) {
-      socket.emit('lobby', lobby.id, 'START_GAME');
+    if (Object.keys(lobby.players).length >= 1) {
+      socket.emit('lobby', 'START_GAME');
     } else {
       alert('4 or more players are required to start the game.')
     }
   }
 
   const fetchLobby = useCallback(() => {
-    socket.emit('lobbyStatus', lobby.id, (message) => {
+    socket.emit('lobbyStatus', (message) => {
       if ('error' in message) {
         console.log(message.error);
       } else {
         dispatch(setLobby(message));
+
+        setHostAlias(
+          message.players.find((player) => {
+            return player.id === socket.id;
+          }).alias
+        );
       }
 
       socket.on('lobbyStatus', (message) => {
         dispatch(setLobby(message));
+
+        setHostAlias(
+          message.players.find((player) => {
+            return player.id === socket.id;
+          }).alias
+        );
       });
     });
-  }, [socket, dispatch, lobby.id]);
+  }, [socket, dispatch]);
 
   useEffect(() => {
     if (lobby.status === 'GAME') {
@@ -60,13 +73,16 @@ const Lobby = ({ socket, lobby, dispatch }) => {
       <Row>
         <Col>
           <h1>Lobby {lobby.id}</h1>
-          {lobby.players && lobby.hostId in lobby.players ? <h3>Host: {lobby.players[lobby.hostId].alias}</h3> : ''}
+
+          <h3>
+            Host: {hostAlias}
+          </h3>
 
           <ListGroup>
             {
-              Object.keys(lobby.players).map((id, index) => (
-                <ListGroup.Item key={index} variant={lobby.players[id].status === 'PLAYER_READY' ? 'success' : ''}>
-                  {lobby.players[id].alias} {socket.id === lobby.hostId ? <Button variant="danger" onClick={() => kickPlayer(id)}>X</Button> : ''}
+              Object.keys(lobby.players).map((idx, index) => (
+                <ListGroup.Item key={index} variant={lobby.players[idx].status === 'PLAYER_READY' ? 'success' : ''}>
+                  {lobby.players[idx].alias} {socket.id === lobby.hostId ? <Button variant="danger" onClick={() => kickPlayer(idx)}>X</Button> : ''}
                 </ListGroup.Item>
               ))
             }

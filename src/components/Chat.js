@@ -26,7 +26,7 @@ const Chat = ({ socket, lobby, dispatch }) => {
 
   const sendChatMessage = e => {
     if (!chatTimeout) {
-      socket.emit('chat', lobby.id, chatMessageInput);
+      socket.emit('chat', chatMessageInput);
       setChatMessageInput('');
       setChatTimeout(true);
 

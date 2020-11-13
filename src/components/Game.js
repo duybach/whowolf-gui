@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 
@@ -14,46 +14,60 @@ import { setLobby, reduceLobbyGameTimeLeft } from '../actions';
 
 const Game = ({ socket, lobby, dispatch }) => {
   const history = useHistory();
+  const [user, setUser] = useState({});
 
   const fetchLobby = useCallback(() => {
-    socket.emit('lobbyStatus', lobby.id, (message) => {
+    socket.emit('lobbyStatus', (message) => {
       if ('error' in message) {
         console.log(message.error);
       } else {
         dispatch(setLobby(message));
+
+        setUser(
+          message.players.find((player) => {
+            return player.id === socket.id;
+          })
+        );
       }
     });
 
     socket.on('lobbyStatus', (message) => {
+      console.log(message);
       dispatch(setLobby(message));
+
+      setUser(
+        message.players.find((player) => {
+          return player.id === socket.id;
+        })
+      );
     });
-  }, [socket, dispatch, lobby.id]);
+  }, [socket, dispatch]);
 
   const pickPlayer = (playerId, action) => {
-    socket.emit('game', lobby.id, action, { playerId: playerId });
+    socket.emit('game', action, { playerId: playerId });
   };
 
   const renderActionButtons = (playerId) => {
-    if ((lobby.game.round === 0 && lobby.game.phase === 0 ) || lobby.players[socket.id].status !== 'PLAYER_ALIVE' || lobby.players[playerId].status !== 'PLAYER_ALIVE' || (lobby.game.phase === 1 && lobby.players[socket.id].role !== 'WERWOLF') || (lobby.game.phase === 2 && lobby.players[socket.id].role !== 'WITCH')) {
+    if ((lobby.game.round === 0 && lobby.game.phase === 0 ) || user.status !== 'PLAYER_ALIVE' || lobby.players[playerId].status !== 'PLAYER_ALIVE' || (lobby.game.phase === 1 && user.role !== 'WERWOLF') || (lobby.game.phase === 2 && user.role !== 'WITCH')) {
       return (<></>);
     }
 
     if (lobby.game.phase === 0) {
       return (
         <>
-          {socket.id !== playerId ? <Button variant="danger" onClick={() => pickPlayer(playerId, 'PLAYER_VOTE')}>VOTE</Button> : ''}
+          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_VOTE')}>VOTE</Button> : ''}
         </>
       );
-    } else if (lobby.game.phase === 1 && lobby.players[socket.id].role === 'WERWOLF') {
+    } else if (lobby.game.phase === 1 && user.role === 'WERWOLF') {
       return (
         <>
-          {socket.id !== playerId ? <Button variant="danger" onClick={() => pickPlayer(playerId, 'PLAYER_KILL')}>KILL</Button> : ''}
+          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_KILL')}>KILL</Button> : ''}
         </>
       );
-    } else if (lobby.game.phase === 2 && lobby.players[socket.id].role === 'WITCH' && lobby.game.werwolfTarget === playerId) {
+    } else if (lobby.game.phase === 2 && user.role === 'WITCH' && lobby.game.werwolfTarget === playerId) {
       return (
         <>
-          {socket.id !== playerId ? <Button variant="danger" onClick={() => pickPlayer(playerId, 'PLAYER_HEAL')}>HEAL</Button> : ''}
+          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_HEAL')}>HEAL</Button> : ''}
         </>
       );
     } else {
@@ -84,6 +98,7 @@ const Game = ({ socket, lobby, dispatch }) => {
     }
 
     fetchLobby();
+    console.log('FETCHED LOBBY');
 
     const lobbyIntervalId = setInterval(tickTime, 1000);
 
@@ -98,19 +113,20 @@ const Game = ({ socket, lobby, dispatch }) => {
         <Col>
           <h1>Game {lobby.id}</h1>
           <h3>Time: {lobby.game.phase === 0 ? 'day time' : 'night time'} ({renderPhase(lobby.game.phase)})</h3>
+          <h3>Round: {lobby.game.round}</h3>
           <h3>Time left: {lobby.game.timeLeft}s</h3>
-          {lobby.players[socket.id].role === 'WITCH' ? <h3>Heal left: {lobby.players[socket.id].healLeft}</h3> : ''}
+          {user.role === 'WITCH' ? <h3>Heal left: {user.healLeft}</h3> : ''}
 
           <ListGroup>
             {
-              Object.keys(lobby.players).map((playerId, index) => (
-                <ListGroup.Item key={index} active={lobby.players[socket.id].targetPlayerId === playerId ? true : false}>
-                  {lobby.players[playerId].alias} (
-                  {playerId === socket.id ? `${lobby.players[playerId].role} | ` : ''}
-                  {lobby.players[playerId].status})
-                  {renderActionButtons(playerId)}
+              Object.keys(lobby.players).map((idx, index) => (
+                <ListGroup.Item key={index} active={user.targetPlayerId === lobby.players[idx].id ? true : false}>
+                  {lobby.players[idx].alias} (
+                  {lobby.players[idx].id === socket.id ? `${lobby.players[idx].role} | ` : ''}
+                  {lobby.players[idx].status})
+                  {renderActionButtons(idx)}
 
-                  {lobby.players[playerId].targetPlayerId ? `Voted for ${lobby.players[playerId].targetPlayerId}` : ''}
+                  {lobby.players[idx].targetPlayerId ? `Voted for ${lobby.players[idx].targetPlayerId}` : ''}
                 </ListGroup.Item>
               ))
             }

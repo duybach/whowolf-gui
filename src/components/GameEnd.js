@@ -16,7 +16,7 @@ const Game = ({ socket, lobby, dispatch }) => {
   const history = useHistory();
 
   const fetchLobby = useCallback(() => {
-    socket.emit('lobbyStatus', lobby.id, (message) => {
+    socket.emit('lobbyStatus', (message) => {
       if ('error' in message) {
         console.log(message.error);
       } else {
@@ -27,7 +27,7 @@ const Game = ({ socket, lobby, dispatch }) => {
     socket.on('lobbyStatus', (message) => {
       dispatch(setLobby(message));
     });
-  }, [socket, dispatch, lobby.id]);
+  }, [socket, dispatch]);
 
 
   const restartGame = () => {

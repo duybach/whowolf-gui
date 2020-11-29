@@ -8,6 +8,9 @@ import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+
 import Chat from './Chat';
 
 import { setLobby } from '../actions';
@@ -81,8 +84,9 @@ const Lobby = ({ socket, lobby, dispatch }) => {
           <ListGroup>
             {
               Object.keys(lobby.players).map((idx, index) => (
-                <ListGroup.Item key={index} variant={lobby.players[idx].status === 'PLAYER_READY' ? 'success' : ''}>
-                  {lobby.players[idx].alias} {socket.id === lobby.hostId ? <Button variant="danger" onClick={() => kickPlayer(idx)}>X</Button> : ''}
+                <ListGroup.Item className="d-flex justify-content-between align-items-center" key={index} variant={lobby.players[idx].status === 'PLAYER_READY' ? 'success' : ''}>
+                  {lobby.players[idx].alias}
+                  {socket.id === lobby.hostId ? <Button variant="danger" onClick={() => kickPlayer(idx)}><FontAwesomeIcon icon={faTimes} /></Button> : ''}
                 </ListGroup.Item>
               ))
             }
@@ -90,12 +94,12 @@ const Lobby = ({ socket, lobby, dispatch }) => {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mt-3">
         <Col>
-          <Button variant={playerReady ? 'danger' : 'primary'} onClick={() => setPlayerStatus(!(playerReady))}>{playerReady ? 'Not ready' : 'Ready'}</Button>
+          <Button variant={playerReady ? 'danger' : 'primary'} onClick={() => setPlayerStatus(!(playerReady))} block>{playerReady ? 'Not ready' : 'Ready'}</Button>
         </Col>
         <Col>
-          {socket.id === lobby.hostId ? <Button variant={lobby.status === 'LOBBY_READY' ? 'primary' : 'danger'} onClick={() => startGame()}>Start</Button> : ''}
+          {socket.id === lobby.hostId ? <Button variant={lobby.status === 'LOBBY_READY' ? 'primary' : 'danger'} onClick={() => startGame()} block>Start</Button> : ''}
         </Col>
       </Row>
 

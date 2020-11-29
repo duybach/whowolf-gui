@@ -8,6 +8,9 @@ import Container from 'react-bootstrap/Container';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faVoteYea, faSkull, faHeartbeat } from '@fortawesome/free-solid-svg-icons';
+
 import Chat from './Chat';
 
 import { setLobby, reduceLobbyGameTimeLeft } from '../actions';
@@ -55,19 +58,19 @@ const Game = ({ socket, lobby, dispatch }) => {
     if (lobby.game.phase === 0) {
       return (
         <>
-          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_VOTE')}>VOTE</Button> : ''}
+          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_VOTE')}><FontAwesomeIcon icon={faVoteYea} /></Button> : ''}
         </>
       );
     } else if (lobby.game.phase === 1 && user.role === 'WERWOLF') {
       return (
         <>
-          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_KILL')}>KILL</Button> : ''}
+          <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_KILL')}><FontAwesomeIcon icon={faSkull} /></Button>
         </>
       );
-    } else if (lobby.game.phase === 2 && user.role === 'WITCH' && lobby.game.werwolfTarget === playerId) {
+    } else if (lobby.game.phase === 2 && user.role === 'WITCH' && user.healLeft > 0 && lobby.game.werwolfTarget === lobby.players[playerId].id) {
       return (
         <>
-          {socket.id !== lobby.players[playerId].id ? <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_HEAL')}>HEAL</Button> : ''}
+          <Button variant="danger" onClick={() => pickPlayer(lobby.players[playerId].id, 'PLAYER_HEAL')}><FontAwesomeIcon icon={faHeartbeat} /></Button>
         </>
       );
     } else {
@@ -98,7 +101,6 @@ const Game = ({ socket, lobby, dispatch }) => {
     }
 
     fetchLobby();
-    console.log('FETCHED LOBBY');
 
     const lobbyIntervalId = setInterval(tickTime, 1000);
 
@@ -120,13 +122,11 @@ const Game = ({ socket, lobby, dispatch }) => {
           <ListGroup>
             {
               Object.keys(lobby.players).map((idx, index) => (
-                <ListGroup.Item key={index} active={user.targetPlayerId === lobby.players[idx].id ? true : false}>
+                <ListGroup.Item className="d-flex justify-content-between align-items-center" key={index} active={user.targetPlayerId === lobby.players[idx].id ? true : false}>
                   {lobby.players[idx].alias} (
                   {lobby.players[idx].id === socket.id ? `${lobby.players[idx].role} | ` : ''}
                   {lobby.players[idx].status})
                   {renderActionButtons(idx)}
-
-                  {lobby.players[idx].targetPlayerId ? `Voted for ${lobby.players[idx].targetPlayerId}` : ''}
                 </ListGroup.Item>
               ))
             }

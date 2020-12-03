@@ -1,3 +1,8 @@
+TODO
+Fix bug where you are in-game after creating a new lobby
+Fix socket on kicked location
+Settings
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

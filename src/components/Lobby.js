@@ -26,7 +26,7 @@ const Lobby = ({ socket, lobby, dispatch }) => {
   };
 
   const kickPlayer = (playerId) => {
-    socket.emit('lobby', 'KICK_PLAYER', { playerId: playerId });
+    socket.emit('lobby', 'KICK_PLAYER', { playerId: lobby.players[playerId].id });
   };
 
   const startGame = () => {
@@ -60,8 +60,12 @@ const Lobby = ({ socket, lobby, dispatch }) => {
           }).alias
         );
       });
+
+      socket.on('kicked', () => {
+        history.push(``);
+      });
     });
-  }, [socket, dispatch]);
+  }, [socket, dispatch, history]);
 
   useEffect(() => {
     if (lobby.status === 'GAME') {

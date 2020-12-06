@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 import Chat from './Chat';
+import LobbySetting from './LobbySetting';
 
 import { setLobby } from '../actions';
 
@@ -85,6 +86,8 @@ const Lobby = ({ socket, lobby, dispatch }) => {
             Host: {hostAlias}
           </h3>
 
+          {socket.id === lobby.hostId ? <div><LobbySetting /></div> : ''}
+
           <ListGroup>
             {
               Object.keys(lobby.players).map((idx, index) => (
@@ -112,7 +115,7 @@ const Lobby = ({ socket, lobby, dispatch }) => {
       </Row>
     </Container>
   );
-}
+};
 
 const mapStateToProps = (state) => ({
   socket: state.socket,
